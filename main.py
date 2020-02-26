@@ -2,6 +2,7 @@ import json
 
 # file = 'files/messages/inbox/mateusznycz_0xu-u6ou3q/message_1.json'
 file = 'files/messages/inbox/AleksandraKogut_6TQX1Y0GGw/message_1.json'
+file_second = 'files/messages/inbox/AleksandraKogut_6TQX1Y0GGw/message_2.json'
 
 
 def string_escape(s, encoding='utf-8'):
@@ -11,15 +12,22 @@ def string_escape(s, encoding='utf-8'):
             .decode(encoding))
 
 
+# TODO: update() function
 class Conversation:
 
-    def __init__(self, conversation):
-        self.participants: list = conversation['participants']
-        self.messages: list = [Message(message) for message in conversation['messages']]
-        self.title: str = conversation['title']
-        self.is_still_participant: bool = conversation['is_still_participant']
-        self.thread_type: str = conversation['thread_type']
-        self.thread_path: str = conversation['thread_path']
+    def __init__(self, *conversations):
+        self.participants: list = list()
+        self.messages: list = list()
+        for file in conversations:
+            with open(file) as f:
+                conversation = json.load(f)
+            print('hello')
+            self.participants += sorted(conversation['participants'], key=lambda x: x['name'])
+            self.messages += [Message(message) for message in conversation['messages']]
+            self.title: str = conversation['title']
+            self.is_still_participant: bool = conversation['is_still_participant']
+            self.thread_type: str = conversation['thread_type']
+            self.thread_path: str = conversation['thread_path']
 
     def __len__(self):
         return len(self.messages)
@@ -73,7 +81,21 @@ class Message:
 
 
 if __name__ == '__main__':
-    with open(file) as f:
-        data = json.load(f)
+    # with open(file) as f:
+    #     data = json.load(f)
 
-    conv = Conversation(data)
+    conv = Conversation(file, file_second)
+    print(len(conv.messages))
+    # a = [1, 2, 3]
+    # b = [2, 3, 4]
+    # c = [x for x in b if x not in a] <--- TODO: SOMETHING LIKE THIS TO AVOID DUPS IN PARTICIPANTS OR SOMETHING
+    #
+    # a = conv.messages.copy()
+    # b = conv.messages.copy()
+    # import random
+    #
+    # random.shuffle(b)
+    # print(a == b)
+    # b.sort(key=lambda x: x.timestamp, reverse=True)
+    # print(a == b)
+    print(conv.participants)
