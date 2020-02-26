@@ -36,9 +36,16 @@ class Message:
         self.type: str = message['type']
 
         # Content:
-        self.content = self.audio_files = self.videos = self.gifs = self.photos = self.sticker = None
+        self.content = self.share = None
+
         if 'content' in message:
             self.content: str = message['content']
+        if 'share' in message:
+            self.share: dict = message['share']
+
+        # Instead of content
+        self.audio_files = self.videos = self.gifs = self.photos = self.sticker = None
+
         if 'audio_files' in message:
             self.audio_files: list = message['audio_files']
         if 'videos' in message:
@@ -70,7 +77,3 @@ if __name__ == '__main__':
         data = json.load(f)
 
     conv = Conversation(data)
-
-    print(conv.title, conv.participants)
-    print(len(conv.messages))
-    print(conv.messages)
