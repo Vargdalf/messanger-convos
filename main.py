@@ -12,28 +12,37 @@ def string_escape(s, encoding='utf-8'):
             .decode(encoding))
 
 
-# TODO: update() function
 class Conversation:
 
     def __init__(self, *conversations):
         self.participants: list = list()
         self.messages: list = list()
-        for file in conversations:
-            with open(file) as f:
-                conversation = json.load(f)
-            print('hello')
-            self.participants += sorted(conversation['participants'], key=lambda x: x['name'])
-            self.messages += [Message(message) for message in conversation['messages']]
-            self.title: str = conversation['title']
-            self.is_still_participant: bool = conversation['is_still_participant']
-            self.thread_type: str = conversation['thread_type']
-            self.thread_path: str = conversation['thread_path']
+        self.title: str = ''
+        self.thread_type: str = ''
+        self.thread_path: str = ''
+
+        self.update(*conversations)
 
     def __len__(self):
         return len(self.messages)
 
     def __str__(self):
         return f'Conversation: {self.title}'
+
+    def update(self, *conversations):
+        for file in conversations:
+            with open(file) as f:
+                conversation = json.load(f)
+
+            self.participants += [participant for participant in conversation['participants'] if
+                                  participant not in self.participants]
+            self.messages += [Message(message) for message in conversation['messages']]
+            self.title: str = conversation['title']
+            self.thread_type: str = conversation['thread_type']
+            self.thread_path: str = conversation['thread_path']
+
+        self.participants.sort(key=lambda x: x['name'])
+        self.messages.sort(key=lambda x: x.timestamp, reverse=True)
 
 
 class Message:
@@ -81,21 +90,6 @@ class Message:
 
 
 if __name__ == '__main__':
-    # with open(file) as f:
-    #     data = json.load(f)
-
     conv = Conversation(file, file_second)
     print(len(conv.messages))
-    # a = [1, 2, 3]
-    # b = [2, 3, 4]
-    # c = [x for x in b if x not in a] <--- TODO: SOMETHING LIKE THIS TO AVOID DUPS IN PARTICIPANTS OR SOMETHING
-    #
-    # a = conv.messages.copy()
-    # b = conv.messages.copy()
-    # import random
-    #
-    # random.shuffle(b)
-    # print(a == b)
-    # b.sort(key=lambda x: x.timestamp, reverse=True)
-    # print(a == b)
     print(conv.participants)
