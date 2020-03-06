@@ -1,7 +1,10 @@
 import json
 
 
-# TODO: add string_escape() method to escape participants, messages, title (later)
+# TODO: add string_escape() method to escape participants, messages, title (now i guess)
+# Maybe a kwarg in Conversation and Message set to None and can be set to your latin-1 or so to escape on creation
+# Using method that you can also use later.
+# And a string_escape() method in utils maybe to use on single instance of string if you wish.
 class Conversation:
 
     def __init__(self, *conversations):
@@ -18,6 +21,9 @@ class Conversation:
 
     def __str__(self):
         return f'Conversation: {self.title}'
+
+    def __repr__(self):
+        return self.__str__()
 
     def update(self, *conversations):
         for file in conversations:
@@ -83,3 +89,6 @@ class Message:
 
     def __repr__(self):
         return self.__str__()
+
+    def words(self):
+        return self.content.split() if self.content is not None else None
