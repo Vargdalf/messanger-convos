@@ -1,4 +1,5 @@
 import json
+import itertools
 
 
 # TODO: Check for \ at the end of string. Will be in the form of '\\"'
@@ -47,8 +48,17 @@ class Conversation:
 
     def escape(self, encoding='utf-8'):
         self.title = string_escape(self.title, encoding)
-        self.participants = [string_escape(participant['name'], encoding) for participant in self.participants]
+        self.participants = [{'name': string_escape(participant['name'], encoding)} for participant in
+                             self.participants]
         [message.escape(encoding=encoding) for message in self.messages]
+
+    def words(self):
+        words = [message.words() for message in self.messages if message.words() is not None]
+        return list(itertools.chain(*words))
+
+    def reactions(self):
+        reactions = [message.reactions for message in self.messages if message.reactions is not None]
+        return list(itertools.chain(*reactions))
 
 
 class Message:
@@ -106,4 +116,5 @@ class Message:
     def escape(self, encoding='utf-8'):
         self.author = string_escape(self.author, encoding=encoding)
         if self.content:
+            self.content = string_escape(self.content, encoding=encoding)
             self.current_content = string_escape(self.current_content, encoding=encoding)
