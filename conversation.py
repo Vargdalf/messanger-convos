@@ -1,10 +1,15 @@
 import json
 
 
-# TODO: add string_escape() method to escape participants, messages, title (now i guess)
-# Maybe a kwarg in Conversation and Message set to None and can be set to your latin-1 or so to escape on creation
-# Using method that you can also use later.
-# And a string_escape() method in utils maybe to use on single instance of string if you wish.
+# TODO: Check for \ at the end of string. Will be in the form of '\\"'
+# Can actually be any number of backslashes ://
+def string_escape(s, encoding='utf-8'):
+    return (s.encode('latin1')
+            .decode('unicode-escape')
+            .encode('latin1')
+            .decode(encoding))
+
+
 class Conversation:
 
     def __init__(self, *conversations):
@@ -39,6 +44,11 @@ class Conversation:
 
         self.participants.sort(key=lambda x: x['name'])
         self.messages.sort(key=lambda x: x.timestamp, reverse=True)
+
+    def escape(self, encoding='utf-8'):
+        self.title = string_escape(self.title, encoding)
+        self.participants = [string_escape(participant['name'], encoding) for participant in self.participants]
+        [message.escape(encoding=encoding) for message in self.messages]
 
 
 class Message:
@@ -92,3 +102,8 @@ class Message:
 
     def words(self):
         return self.content.split() if self.content is not None else None
+
+    def escape(self, encoding='utf-8'):
+        self.author = string_escape(self.author, encoding=encoding)
+        if self.content:
+            self.current_content = string_escape(self.current_content, encoding=encoding)

@@ -17,14 +17,9 @@ files_2 = [
     'files/messages/inbox/KamilMusial_bABm7_mZxQ/message_6.json',
 ]
 
-
-def string_escape(s, encoding='utf-8'):
-    return (s.encode('latin1')
-            .decode('unicode-escape')
-            .encode('latin1')
-            .decode(encoding))
-
-
 if __name__ == '__main__':
     conv = Conversation(*files)
+    conv.escape()
     print(len(conv.messages))
+    print(conv.participants)
+    print(conv.messages[100:120])
