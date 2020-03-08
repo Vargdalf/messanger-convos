@@ -1,4 +1,5 @@
-from conversation import Conversation, stats
+from conversation import Conversation
+from stats import stats
 
 files = [
     'files/messages/inbox/AleksandraKogut_6TQX1Y0GGw/message_1.json',

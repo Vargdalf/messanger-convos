@@ -1,5 +1,7 @@
+import numpy as np
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+from PIL import Image
 
 from conversation import Conversation
 
@@ -13,10 +15,21 @@ files = [
 ]
 
 
-def word_map_all(conversation):
+def word_map_all(conversation, width=480, height=480):
     words = ' '.join(conversation.words())
-    wordcloud = WordCloud(width=480, height=480, margin=0).generate(words)
+    wordcloud = WordCloud(width=width, height=height, margin=0).generate(words)
 
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.margins(x=0, y=0)
+    plt.show()
+
+
+def words_map_mask(conversation, mask):
+    words = ' '.join(conversation.words())
+    wordcloud = WordCloud(mask=mask).generate(words)
+
+    plt.figure()
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis('off')
     plt.margins(x=0, y=0)
@@ -26,4 +39,12 @@ def word_map_all(conversation):
 if __name__ == '__main__':
     conv = Conversation(*files)
     conv.escape()
-    word_map_all(conv)
+
+    # Normal Word Map
+    # word_map_all(conv)
+
+    frog_mask = np.array(Image.open('files/images/frog.jpg'))
+    heart_mask = np.array(Image.open('files/images/heart.jpg'))
+
+    # Word map with mask
+    # words_map_mask(conv, heart_mask)
